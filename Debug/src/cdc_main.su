@@ -1,0 +1,8 @@
+core_cm3.h:1323:22:NVIC_EnableIRQ	16	static
+core_cm3.h:1405:22:NVIC_SetPriority	16	static
+cdc_vcom.h:107:24:vcom_connected	4	static
+cdc_main.c:76:6:USB_send	24	static
+cdc_main.c:88:10:USB_receive	32	static
+cdc_main.c:107:6:USB_IRQHandler	16	static
+cdc_main.c:116:27:find_IntfDesc	32	static
+cdc_main.c:147:6:cdc_task	144	static

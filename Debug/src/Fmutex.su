@@ -1,0 +1,5 @@
+Fmutex.cpp:10:1:Fmutex::Fmutex()	16	static
+Fmutex.cpp:15:1:Fmutex::~Fmutex()	16	static
+Fmutex.cpp:15:1:virtual Fmutex::~Fmutex()	16	static
+Fmutex.cpp:19:6:void Fmutex::lock()	16	static
+Fmutex.cpp:24:6:void Fmutex::unlock()	16	static

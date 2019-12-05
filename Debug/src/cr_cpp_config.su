@@ -1,0 +1,6 @@
+cr_cpp_config.cpp:37:7:void* operator new(size_t)	16	static
+cr_cpp_config.cpp:42:7:void* operator new [](size_t)	16	static
+cr_cpp_config.cpp:47:6:void operator delete(void*)	16	static
+cr_cpp_config.cpp:52:6:void operator delete [](void*)	16	static
+cr_cpp_config.cpp:57:16:int __aeabi_atexit(void*, void (*)(void*), void*)	24	static
+cr_cpp_config.cpp:85:6:void __gnu_cxx::__verbose_terminate_handler()	4	static

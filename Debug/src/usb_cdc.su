@@ -1,0 +1,20 @@
+core_cm3.h:1405:22:void NVIC_SetPriority(IRQn_Type, uint32_t)	16	static
+core_cm3.h:1532:26:uint32_t SysTick_Config(uint32_t)	16	static
+adc_15xx.h:237:20:void Chip_ADC_SetDivider(LPC_ADC_T*, uint8_t)	24	static
+adc_15xx.h:296:20:void Chip_ADC_SetADC0Input(LPC_ADC_T*, uint32_t)	16	static
+adc_15xx.h:346:20:void Chip_ADC_SetupSequencer(LPC_ADC_T*, ADC_SEQ_IDX_T, uint32_t)	24	static
+adc_15xx.h:357:20:void Chip_ADC_EnableSequencer(LPC_ADC_T*, ADC_SEQ_IDX_T)	16	static
+adc_15xx.h:381:20:void Chip_ADC_StartSequencer(LPC_ADC_T*, ADC_SEQ_IDX_T)	16	static
+adc_15xx.h:464:24:uint32_t Chip_ADC_GetDataReg(LPC_ADC_T*, uint8_t)	16	static
+adc_15xx.h:562:24:uint32_t Chip_ADC_GetFlags(LPC_ADC_T*)	16	static
+adc_15xx.h:573:20:void Chip_ADC_ClearFlags(LPC_ADC_T*, uint32_t)	16	static
+adc_15xx.h:584:20:void Chip_ADC_SetTrim(LPC_ADC_T*, uint32_t)	16	static
+gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	16	static
+usb_cdc.cpp:42:6:void vConfigureTimerForRunTimeStats()	8	static
+usb_cdc.cpp:53:6:void ADC_StartCalibration(LPC_ADC_T*)	24	static
+usb_cdc.cpp:65:13:void prvSetupHardware()	8	static
+usb_cdc.cpp:72:13:void ADC_setup()	8	static
+usb_cdc.cpp:118:13:void receive_task(void*)	104	static
+usb_cdc.cpp:132:13:void sensor_test_task(void*)	88	static
+usb_cdc.cpp:235:5:int main()	16	static
+usb_cdc.cpp:275:5:int rotation(uint32_t, int)	24	static
