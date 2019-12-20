@@ -15,6 +15,5 @@ usb_cdc.cpp:53:6:void ADC_StartCalibration(LPC_ADC_T*)	24	static
 usb_cdc.cpp:65:13:void prvSetupHardware()	8	static
 usb_cdc.cpp:72:13:void ADC_setup()	8	static
 usb_cdc.cpp:118:13:void receive_task(void*)	104	static
-usb_cdc.cpp:132:13:void sensor_test_task(void*)	88	static
-usb_cdc.cpp:235:5:int main()	16	static
-usb_cdc.cpp:275:5:int rotation(uint32_t, int)	24	static
+usb_cdc.cpp:132:13:void sensor_task(void*)	72	static
+usb_cdc.cpp:237:5:int main()	16	static

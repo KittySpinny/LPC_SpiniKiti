@@ -30,12 +30,12 @@
 #include "user_vcom.h"
 
 #define TICKRATE_HZ 1000
-#define black_th 3550
+#define black_th 3300
 
 
 // TODO: insert other definitions and declarations here
 
-int rotation(uint32_t reading, int count);
+
 /* the following is required if runtime statistics are to be collected */
 extern "C" {
 
@@ -129,7 +129,7 @@ static void receive_task(void *pvParameters) {
 	}
 }
 
-static void sensor_test_task(void *pvParameters)
+static void sensor_task(void *pvParameters)
 {
 
 	uint32_t a0 = 0;
@@ -137,17 +137,18 @@ static void sensor_test_task(void *pvParameters)
 	uint32_t s1 = 0;
 	uint32_t s2 = 0;
 
-	char test_S1[10];
-	char test_S2[10];
+//	char test_S1[10];		//DEBUGGING
+//	char test_S2[10];		//DEBUGGING
 	char distance[10];
+	char start[] = "start\r\n";
 
 	int timeout  = 0;
-
+//	int length = 0;		//DEBUGGING
 	int dir = 0;
 	int count = 0;
 
 	bool hit = false;
-
+	bool sendReady = false;
 	vTaskDelay(1000);
 
 	while(1)
@@ -165,68 +166,69 @@ static void sensor_test_task(void *pvParameters)
 
 
 		//DETERMINE WHICH SENSOR
-		if(s1 > 3900 && dir != 2 && dir != 1)
+		if(s1 > black_th && dir != 2 && dir != 1)
 		{
 			dir = 1;
+			USB_send((uint8_t*)start, sizeof(start));	 //SENDS START COMMAND IF THE WHEEL START TURNING (GIVEN SENSOR SEES BLACK)
+			ITM_write("sent start");
 		}
-	/*	else if(s2 > 3900 && dir != 1 && dir != 2)
+		else if(s2 > black_th && dir != 1 && dir != 2)
 		{
 			dir = 2;
-		}*/
+			USB_send((uint8_t*)start, sizeof(start)); 	 //SENDS START COMMAND IF THE WHEEL START TURNING (GIVEN SENSOR SEES BLACK)
+			ITM_write("sent start");
+		}
 
 		//READ SENSOR DEPENDING ON DIRECTION
 		if(dir == 1) {
-			if(s1 > 2900 && hit == false)
+			if(s1 > black_th && hit == false)
 			{
-				count++;
-				timeout = xTaskGetTickCount();
+				count++;						// INCREMENTS COUNTER EVERY TIME THE GIVEN SENSOR SEES BLACK
+				timeout = xTaskGetTickCount(); // GETS CURRENT TICK COUNT
 				hit = true;
+				sendReady = true;
 			}
-			else if(s1 < 3900){hit = false;}
+			else if(s1 < black_th){hit = false;}
 
 		}
 		else if(dir == 2){
 
-			if(s2 > 3900 && hit == false)
+			if(s2 > black_th && hit == false)
 			{
-				//count++;
-				timeout = xTaskGetTickCount();
+				count++; 						// INCREMENTS COUNTER EVERY TIME THE GIVEN SENSOR SEES BLACK
+				timeout = xTaskGetTickCount(); // GETS CURRENT TICK COUNT
 				hit = true;
+				sendReady = true;
+			}
+			else if(s2 < black_th){hit = false;}
+		}
+		if((xTaskGetTickCount() - timeout) >= 10000 && s1 < black_th && s2 < black_th) //IF NEITHER SENSOR SEES BLACK AND 10 SECONDS HAVE ELAPSED, RESET THE SYSTEM
+		{
+			//SENDING COUNT TO SERIAL
+			if(sendReady)
+			{
+				//sprintf(distance, "%d", count);   //DEBUGGING
+				USB_send((uint8_t*)distance, sizeof(distance));
+				sendReady = false;
 
 			}
-			else if(s2 < 3900){hit = false;}
-		}
-		if((xTaskGetTickCount() - timeout) >= 10000 && s1 < 3900 /*&& s2 < 3900*/)
-		{
-			//strcpy(distance, std::to_string(count).c_str());
-			int color = sprintf(distance, "%d\r\n", count);
-		//	USB_send((uint8_t*)distance, color);
+
 			dir = 0;
 			count = 0;
 			timeout = 0;
 		}
 
-
-		sprintf(test_S1, "%d ", s1);
-		sprintf(test_S2, "%d	", s2);
+		//DEBUGGING
+	/*	sprintf(test_S1, "S1 %d ", s1);
+		sprintf(test_S2, "S2 %d	", s2);
 		sprintf(distance, "%d\r\n", count);
 		ITM_write(test_S1);
 		ITM_write(test_S2);
 
-		ITM_write(distance);
+		ITM_write(distance);*/
 
 		vTaskDelay(100);
 
-		/*else
-		{
-			int color = sprintf(str, white);
-			USB_send((uint8_t*)str, color);
-			sprintf(test_S1, "%d\r\n", s1);
-			sprintf(test_S2, "%d\r\n", (int) s2);
-			ITM_write(test_S1);
-			ITM_write(test_S2);
-			vTaskDelay(10);
-		}*/
 	}
 
 
@@ -238,20 +240,15 @@ int main(void) {
 
 
 
-    prvSetupHardware();
+	prvSetupHardware();
 	ADC_setup();
 
 	ITM_init();
 
 
-	xTaskCreate(sensor_test_task, "sensor_test",
+	xTaskCreate(sensor_task, "sensor_task",
 			configMINIMAL_STACK_SIZE * 3, NULL, (tskIDLE_PRIORITY + 1UL),
 			(TaskHandle_t *) NULL);
-
-	/*	xTaskCreate(send_task, "Tx",
-				configMINIMAL_STACK_SIZE * 3, NULL, (tskIDLE_PRIORITY + 1UL),
-				(TaskHandle_t *) NULL);
-	 */
 
 	xTaskCreate(receive_task, "Rx",
 			configMINIMAL_STACK_SIZE * 3, NULL, (tskIDLE_PRIORITY + 1UL),
@@ -270,16 +267,4 @@ int main(void) {
 
 	/* Should never arrive here */
 	return 1;
-}
-
-int rotation(uint32_t reading, int count)
-{
-	bool hit = false;
-	if(reading > 3900 && hit == false)
-	{
-		count++;
-		hit == true;
-	}
-	else{hit = false;}
-	return count;
 }
